@@ -92,9 +92,17 @@ they can be corrected:
    roster-balancing algorithm (`docs/roster-algorithm.md`) and data model (`docs/data-model.md`,
    `Game.number_of_teams` and `TeamAssignment.team_index`) have been generalized to N teams
    accordingly. See the resolved open question below.
-5. **Ratings are admin/private by default.** Assumed players do not see other players' numeric
-   ratings (avoids friction in a social group); only admin sees/edits ratings. Players do see their
-   own rating and their own team assignment.
+5. **Ratings are admin/private by default — including from the player themselves, for now.**
+   Assumed players do not see other players' numeric ratings (avoids friction in a social group);
+   only admin sees/edits ratings. Originally this also allowed a player to see their **own**
+   rating, but that's deferred as of 2026-07-19: since v1 has no real player authentication (a
+   player is only "who a client claims to be," see assumption 1 and
+   `docs/adr/0002-player-rating-privacy-deferred.md`), a rating-fetching action can't actually
+   verify the caller is the player whose rating it's returning — anyone can request any player's
+   rating by supplying a different id. Rather than accept that exposure, rating display is
+   withheld from every player-facing screen (including the player's own profile) until a real
+   identity mechanism exists. Players still see their own team assignment (positions/roster),
+   which carries no comparable privacy sensitivity.
 6. **Payment is tracked, not processed.** No payment gateway; "payment done" is a manual
    admin-set flag per (game, player).
 7. **Timezone/locale.** Single timezone assumed (the league's home timezone) — no multi-timezone

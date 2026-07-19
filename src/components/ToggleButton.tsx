@@ -31,9 +31,13 @@ export function ToggleButton({
 
   const className = [
     "min-h-11 min-w-11 rounded-md border px-4 font-medium",
+    // Unpressed border: gray-500, not gray-300. docs/ux/design-tokens.md
+    // requires 3:1 minimum contrast for UI component boundaries; gray-300
+    // on white measures ≈1.47:1 (fails — this was a real Phase 6 QA
+    // finding), gray-500 measures ≈4.84:1 (clears with margin).
     pressed
       ? "border-blue-600 bg-blue-600 text-white"
-      : "border-gray-300 bg-white text-gray-900",
+      : "border-gray-500 bg-white text-gray-900",
     disabled ? "opacity-50" : "",
   ]
     .filter(Boolean)

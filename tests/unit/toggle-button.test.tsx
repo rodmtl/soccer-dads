@@ -124,6 +124,25 @@ describe("ToggleButton", () => {
     expect(screen.queryByText("✓")).not.toBeInTheDocument();
   });
 
+  // docs/ux/design-tokens.md: "3:1 minimum ... for UI component
+  // boundaries/focus indicators." Phase 6 QA measured the unpressed state's
+  // border-gray-300-on-white at ≈1.47:1 (fails); border-gray-500 measures
+  // ≈4.84:1 against white (computed via the CSS Color 4 OKLCH→sRGB
+  // conversion of Tailwind's actual token value, not eyeballed), clearing
+  // the bar with margin. gray-400 (≈2.60:1) was checked and still fails.
+  it("uses an unpressed border shade that clears the 3:1 UI-boundary contrast minimum against a white background", () => {
+    render(
+      <ToggleButton pressed={false} onToggle={() => {}}>
+        Confirm
+      </ToggleButton>,
+    );
+
+    const className = screen.getByRole("button", { name: "Confirm" }).className;
+    expect(className).toContain("border-gray-500");
+    expect(className).not.toContain("border-gray-300");
+    expect(className).not.toContain("border-gray-400");
+  });
+
   it("renders visually distinct styling when pressed vs. not pressed", () => {
     const { rerender } = render(
       <ToggleButton pressed onToggle={() => {}}>
