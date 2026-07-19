@@ -15,15 +15,17 @@ screen shows the player's own record:
 
 - `name` — read-only (admin-entered, admin-edited only; not editable here).
 - `age` — read-only (same reason).
-- `rating` — read-only, **visible to the player only for their own record** (per
-  `docs/discovery.md` assumption 5: players see their own rating, not others'; admin edits it —
-  see `docs/ux/06-admin-player-crud.md`).
+- `rating` — **not shown here.** Deferred per `docs/adr/0002-player-rating-privacy-deferred.md`:
+  v1 has no real player authentication, so a rating-fetching action can't verify the caller
+  actually is the player whose rating it's returning — anyone could request anyone's rating by
+  supplying a different id. Withheld from every player-facing screen (own profile included) until
+  a real identity mechanism exists. Admin still edits it — see `docs/ux/06-admin-player-crud.md`.
 - `positions` — the only field this screen lets the player edit, via the position picker below.
 
 ## User flow
 
 1. Player opens "My Profile" from nav.
-2. Sees name/age/rating (read-only) and their current position selection (0, 1, or 2 of the four
+2. Sees name/age (read-only) and their current position selection (0, 1, or 2 of the four
    options selected).
 3. Taps a position to toggle it.
 4. Change saves automatically (no separate "Save" button — see design decision below);
@@ -60,7 +62,7 @@ translation keys `Position.goalkeeper`/`Position.defender`/`Position.midfielder`
 |---|---|---|
 | Loading | Fetching current player's record | `LoadingSkeleton` |
 | Error (load) | Fetch failed | `ErrorState` + retry |
-| Populated | Loaded | Read-only name/age/rating block + `PositionPicker` reflecting current `positions` |
+| Populated | Loaded | Read-only name/age block + `PositionPicker` reflecting current `positions` |
 | Saving | A toggle was just tapped, request in flight | The toggled button shows a brief "saving" affordance (e.g. subtle spinner adjacent, not replacing its label); other three buttons remain interactive (each toggle is independent) unless a save is already in flight for a *different* button, in which case all four are briefly disabled to avoid racing updates |
 | Save error | Toggle request failed | That toggle reverts to its prior state, inline `role="alert"` `Profile.saveError` ("Couldn't update your positions.") with retry re-attempting the same toggle |
 | Max-reached rejection | Player taps a 3rd position while 2 already selected | No state change; `Profile.maxPositionsMessage` announced via polite live region |
@@ -109,7 +111,7 @@ Behavior:
 │ My Profile                  │  <h1>
 ├─────────────────────────────┤
 │ Jordan Lee            (read-only, admin-entered)
-│ Age 34 · Rating 72     (rating shown only for the current player's own profile)
+│ Age 34                 (rating not shown — see ADR 0002)
 ├─────────────────────────────┤
 │ Preferred positions          Profile.positionsLabel
 │  [ Goalkeeper ]  [✓Defender]
@@ -121,8 +123,8 @@ Behavior:
 ## Accessibility
 
 - Page `<h1>` = `Profile.title` ("My Profile").
-- Read-only fields (`name`, `age`, `rating`) rendered as plain text with a visually-associated
-  label (`Profile.ageLabel`, `Profile.ratingLabel`) — not editable inputs, so no form semantics
+- Read-only fields (`name`, `age`) rendered as plain text with a visually-associated
+  label (`Profile.ageLabel`) — not editable inputs, so no form semantics
   needed there, just `<dt>/<dd>` or labeled paragraphs.
 - Each position `ToggleButton`'s accessible name is the position label itself (`Position.goalkeeper`
   etc.) — the pressed/unpressed state is exposed via `aria-pressed`, not baked into the name text
@@ -132,6 +134,6 @@ Behavior:
 - Max-reached message and per-toggle error message are both `aria-live="polite"` (validation
   feedback, not a page-breaking failure) — except the save-failure banner, which is `role="alert"`
   since it represents an actual failed request, consistent with Flow 2's convention.
-- Focus order: name/age/rating (non-interactive, not in tab order) → Goalkeeper → Defender →
+- Focus order: name/age (non-interactive, not in tab order) → Goalkeeper → Defender →
   Midfielder → Striker, matching the 2×2 grid's reading order (left-to-right, top-to-bottom).
 - Keyboard: `Tab` between the four toggle buttons; `Enter`/`Space` toggles the focused one.

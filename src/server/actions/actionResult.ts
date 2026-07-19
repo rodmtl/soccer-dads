@@ -14,6 +14,13 @@
 // serialize) rather than `catch` + `instanceof`.
 export type InvalidPlayerFailure = { ok: false; reason: "invalid_player" };
 export type NotFoundFailure = { ok: false; reason: "not_found" };
+// Returned by updateOwnPositions when the given positions array fails
+// server-side validation (too many values, an unrecognized value, or a
+// duplicate) — see src/server/services/positions.ts. This is a real
+// rejection distinct from a generic failure, since the client-side
+// PositionPicker only enforces max-2 as a UI convenience and this is the
+// actual boundary check.
+export type InvalidPositionsFailure = { ok: false; reason: "invalid_positions" };
 export type Success<T> = { ok: true; data: T };
 
 // Used by actions that only need to validate the player id (e.g. listGames —
@@ -23,3 +30,10 @@ export type PlayerActionResult<T> = Success<T> | InvalidPlayerFailure;
 // Used by actions scoped to one game (getGameAttendance, setAttendance),
 // which can also fail because that game id doesn't exist.
 export type GameActionResult<T> = Success<T> | InvalidPlayerFailure | NotFoundFailure;
+
+// Used by updateOwnPositions, which can also fail because the given
+// positions array itself is invalid.
+export type UpdatePositionsActionResult<T> =
+  | Success<T>
+  | InvalidPlayerFailure
+  | InvalidPositionsFailure;

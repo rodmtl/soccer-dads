@@ -34,5 +34,20 @@
     "saved": "Enregistré",
     "saveError": "Impossible d'enregistrer votre réponse.",
     "gameNotFoundOrLoadError": "Impossible de charger ce match. Réessayez."
+  },
+  "Position": {
+    "goalkeeper": "Gardien",
+    "defender": "Défenseur",
+    "midfielder": "Milieu",
+    "striker": "Attaquant"
+  },
+  "Profile": {
+    "title": "Mon profil",
+    "ageLabel": "Âge",
+    "positionsLabel": "Positions préférées",
+    "positionsSelectedCount": "{count} sur 2 sélectionnée(s)",
+    "maxPositionsMessage": "Vous pouvez choisir jusqu'à 2 positions.",
+    "saveError": "Impossible de mettre à jour vos positions.",
+    "loadError": "Impossible de charger votre profil. Réessayez."
   }
 }

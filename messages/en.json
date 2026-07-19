@@ -34,5 +34,20 @@
     "saved": "Saved",
     "saveError": "Couldn't save your response.",
     "gameNotFoundOrLoadError": "Couldn't load this game. Try again."
+  },
+  "Position": {
+    "goalkeeper": "Goalkeeper",
+    "defender": "Defender",
+    "midfielder": "Midfielder",
+    "striker": "Striker"
+  },
+  "Profile": {
+    "title": "My Profile",
+    "ageLabel": "Age",
+    "positionsLabel": "Preferred positions",
+    "positionsSelectedCount": "{count} of 2 selected",
+    "maxPositionsMessage": "You can choose up to 2 positions.",
+    "saveError": "Couldn't update your positions.",
+    "loadError": "Couldn't load your profile. Try again."
   }
 }
