@@ -126,10 +126,12 @@ Props: `title: string` (translation key), `description?: string` (translation ke
 ### `ErrorState` / inline error banner
 
 Props: `message: string` (translation key, generic — never surfaces raw server/exception text to
-the user), `onRetry?(): void`.
+the user), `retryLabel: string` (translation key, e.g. `Common.retry` — caller-supplied, kept
+explicit rather than resolved internally so this primitive stays a plain presentational component
+with no hidden dependency on rendering under a specific i18n provider), `onRetry?(): void`.
 
-- Renders `<div role="alert">` containing the message and, if provided, a `Button` labeled
-  `Common.retry`.
+- Renders `<div role="alert">` containing the message and, if `onRetry` is provided, a `Button`
+  labeled with `retryLabel`.
 - `role="alert"` means this is announced immediately to assistive tech when it mounts — appropriate
   since it represents an unexpected failure, not routine empty content.
 - For **inline, per-field or per-row** errors (e.g. a form field failing validation, one roster row

@@ -1,1 +1,14 @@
-{}
+{
+  "Common": {
+    "loading": "Chargement…",
+    "retry": "Réessayer"
+  },
+  "PlayerIdentity": {
+    "title": "Qui êtes-vous ?",
+    "searchLabel": "Recherchez votre nom",
+    "noSearchMatches": "Aucun joueur ne correspond à '''{query}'''",
+    "noPlayersTitle": "Aucun joueur pour l'instant",
+    "noPlayersDescription": "Demandez à l'organisateur de la ligue d'ajouter des joueurs avant de pouvoir rejoindre une partie.",
+    "loadError": "Impossible de charger les joueurs. Réessayez."
+  }
+}

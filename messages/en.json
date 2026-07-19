@@ -1,1 +1,14 @@
-{}
+{
+  "Common": {
+    "loading": "Loading…",
+    "retry": "Retry"
+  },
+  "PlayerIdentity": {
+    "title": "Who are you?",
+    "searchLabel": "Search your name",
+    "noSearchMatches": "No players match '''{query}'''",
+    "noPlayersTitle": "No players yet",
+    "noPlayersDescription": "Ask your league organizer to add players before you can join a game.",
+    "loadError": "Couldn't load players. Try again."
+  }
+}

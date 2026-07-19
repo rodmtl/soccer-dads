@@ -35,6 +35,18 @@ jobs:
       - name: Start postgres (for tests that need a real database)
         run: docker compose up -d postgres
 
+      - name: Wait for postgres to accept connections
+        run: |
+          for i in $(seq 1 30); do
+            docker compose exec -T postgres pg_isready -U soccerdads && exit 0
+            sleep 1
+          done
+          echo "postgres did not become ready in time" >&2
+          exit 1
+
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
+
       - name: Unit tests
         run: npm test
 
@@ -61,6 +73,18 @@ jobs:
 
       - name: Start postgres
         run: docker compose up -d postgres
+
+      - name: Wait for postgres to accept connections
+        run: |
+          for i in $(seq 1 30); do
+            docker compose exec -T postgres pg_isready -U soccerdads && exit 0
+            sleep 1
+          done
+          echo "postgres did not become ready in time" >&2
+          exit 1
+
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
 
       - name: Build
         run: npm run build
