@@ -34,11 +34,26 @@ const messages = {
   },
   Attendance: {
     pageTitle: "Game at {locationName}",
+    detailsTab: "Details & Attendance",
+    rosterTab: "Roster",
     confirmButton: "I'm in",
     declineButton: "Can't make it",
     saved: "Saved",
     saveError: "Couldn't save your response.",
     gameNotFoundOrLoadError: "Couldn't load this game. Try again.",
+  },
+  Roster: {
+    loadError: "Couldn't load the roster. Try again.",
+    notGeneratedTitle: "Teams haven't been announced yet",
+    notGeneratedDescription: "Check back closer to game day.",
+    teamHeading: "Team {number}",
+    youBadge: "You",
+  },
+  Position: {
+    goalkeeper: "Goalkeeper",
+    defender: "Defender",
+    midfielder: "Midfielder",
+    striker: "Striker",
   },
 };
 

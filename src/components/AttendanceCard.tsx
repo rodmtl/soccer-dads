@@ -1,17 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/Button";
 import { ToggleButton } from "@/components/ToggleButton";
-import { GAME_DATE_FORMAT, GAME_TIME_FORMAT } from "@/lib/gameDateTimeFormats";
 import type { AttendanceStatusValue } from "@/server/actions/listGames";
-import type { GameDetails } from "@/server/actions/getGameAttendance";
 
 const SAVED_MESSAGE_DURATION_MS = 3000;
 
 export interface AttendanceCardProps {
-  game: GameDetails;
   attendanceStatus: AttendanceStatusValue;
   isSaving: boolean;
   error: Error | null;
@@ -21,11 +18,11 @@ export interface AttendanceCardProps {
 }
 
 // Game Detail — Attendance (docs/ux/02-player-attendance.md): Confirm/Decline
-// toggles with optimistic save feedback. `game.locationName`/`game.address`
-// are admin-entered free text rendered as-is (no translation key); date/time
-// are formatted per-locale via next-intl (see docs/ux/design-tokens.md).
+// toggles with optimistic save feedback. The game's own heading/date/address
+// are rendered once by GameDetailContainer, above this and the Roster tab
+// (see docs/ux/02-player-attendance.md's tab-shell section) — this component
+// owns only the Attendance tab's own content.
 export function AttendanceCard({
-  game,
   attendanceStatus,
   isSaving,
   error,
@@ -35,7 +32,6 @@ export function AttendanceCard({
 }: AttendanceCardProps) {
   const t = useTranslations("Attendance");
   const tCommon = useTranslations("Common");
-  const format = useFormatter();
   const [showSaved, setShowSaved] = useState(false);
   const wasSavingRef = useRef(isSaving);
 
@@ -62,14 +58,6 @@ export function AttendanceCard({
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold">
-        {t("pageTitle", { locationName: game.locationName })}
-      </h1>
-      <p>
-        {format.dateTime(new Date(game.date), GAME_DATE_FORMAT)} ·{" "}
-        {format.dateTime(new Date(game.time), GAME_TIME_FORMAT)}
-      </p>
-      <p>{game.address}</p>
       <div className="flex gap-2">
         <ToggleButton
           pressed={attendanceStatus === "confirmed"}

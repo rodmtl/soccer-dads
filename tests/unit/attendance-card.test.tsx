@@ -7,7 +7,6 @@ import { AttendanceCard } from "@/components/AttendanceCard";
 const messages = {
   Common: { loading: "Loading…", retry: "Retry", saving: "Saving…" },
   Attendance: {
-    pageTitle: "Game at {locationName}",
     confirmButton: "I'm in",
     declineButton: "Can't make it",
     saved: "Saved",
@@ -15,17 +14,8 @@ const messages = {
   },
 };
 
-const game = {
-  id: "g1",
-  date: "2026-07-20",
-  time: "1970-01-01T18:00:00.000Z",
-  locationName: "Parque Central",
-  address: "123 Main St",
-};
-
 function renderCard(props: Partial<React.ComponentProps<typeof AttendanceCard>> = {}) {
   const defaultProps: React.ComponentProps<typeof AttendanceCard> = {
-    game,
     attendanceStatus: "no_response",
     isSaving: false,
     error: null,
@@ -41,27 +31,6 @@ function renderCard(props: Partial<React.ComponentProps<typeof AttendanceCard>> 
 }
 
 describe("AttendanceCard", () => {
-  it("renders the page heading using the game's location name", () => {
-    renderCard();
-
-    expect(
-      screen.getByRole("heading", { name: "Game at Parque Central" }),
-    ).toBeInTheDocument();
-  });
-
-  it("renders the game's address as plain text (admin-entered, not translated)", () => {
-    renderCard();
-
-    expect(screen.getByText("123 Main St")).toBeInTheDocument();
-  });
-
-  it("renders the game's date and time formatted per-locale, not the raw stored value", () => {
-    renderCard();
-
-    expect(screen.getByText(/July 20, 2026/)).toBeInTheDocument();
-    expect(screen.getByText(/6:00 PM/)).toBeInTheDocument();
-  });
-
   it("presses neither toggle when status is no_response", () => {
     renderCard({ attendanceStatus: "no_response" });
 
@@ -174,7 +143,6 @@ describe("AttendanceCard", () => {
       rerender(
         <NextIntlClientProvider locale="en" messages={messages}>
           <AttendanceCard
-            game={game}
             attendanceStatus="confirmed"
             isSaving={false}
             error={null}
@@ -193,7 +161,6 @@ describe("AttendanceCard", () => {
       rerender(
         <NextIntlClientProvider locale="en" messages={messages}>
           <AttendanceCard
-            game={game}
             attendanceStatus="confirmed"
             isSaving={false}
             error={null}

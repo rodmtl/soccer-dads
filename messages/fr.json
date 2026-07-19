@@ -26,6 +26,8 @@
   },
   "Attendance": {
     "pageTitle": "Match à {locationName}",
+    "detailsTab": "Détails et présence",
+    "rosterTab": "Composition",
     "confirmButton": "Je participe",
     "declineButton": "Je ne peux pas",
     "statusConfirmed": "Confirmé",
@@ -34,6 +36,13 @@
     "saved": "Enregistré",
     "saveError": "Impossible d'enregistrer votre réponse.",
     "gameNotFoundOrLoadError": "Impossible de charger ce match. Réessayez."
+  },
+  "Roster": {
+    "loadError": "Impossible de charger la composition. Réessayez.",
+    "notGeneratedTitle": "Les équipes n'ont pas encore été annoncées",
+    "notGeneratedDescription": "Revenez plus près du jour du match.",
+    "teamHeading": "Équipe {number}",
+    "youBadge": "Vous"
   },
   "Position": {
     "goalkeeper": "Gardien",

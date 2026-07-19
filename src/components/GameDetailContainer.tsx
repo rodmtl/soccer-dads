@@ -1,17 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { AttendanceCard } from "@/components/AttendanceCard";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { RosterContainer } from "@/components/RosterContainer";
+import { TabList } from "@/components/TabList";
+import { GAME_DATE_FORMAT, GAME_TIME_FORMAT } from "@/lib/gameDateTimeFormats";
 import {
   getGameAttendance,
   type GameDetails,
 } from "@/server/actions/getGameAttendance";
 import { setAttendance } from "@/server/actions/setAttendance";
 import type { AttendanceStatusValue } from "@/server/actions/listGames";
+
+type GameDetailTab = "attendance" | "roster";
 
 export interface GameDetailContainerProps {
   gameId: string;
@@ -38,6 +43,7 @@ export function GameDetailContainer({
   const t = useTranslations("Games");
   const tAttendance = useTranslations("Attendance");
   const tCommon = useTranslations("Common");
+  const format = useFormatter();
 
   const [game, setGame] = useState<GameDetails | null>(null);
   const [status, setStatus] = useState<AttendanceStatusValue>("no_response");
@@ -48,6 +54,11 @@ export function GameDetailContainer({
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<Error | null>(null);
+
+  // Details & Attendance is the default/initially-selected tab (matches
+  // behavior before the Roster tab existed) — see docs/ux/02-player-attendance.md's
+  // tab-shell section.
+  const [activeTab, setActiveTab] = useState<GameDetailTab>("attendance");
 
   const lastKnownGoodStatusRef = useRef<AttendanceStatusValue>("no_response");
   const pendingStatusRef = useRef<AttendanceStatusValue | null>(null);
@@ -167,15 +178,44 @@ export function GameDetailContainer({
     return null;
   }
 
+  const pageTitle = tAttendance("pageTitle", { locationName: game.locationName });
+  const tabs: { id: GameDetailTab; label: string }[] = [
+    { id: "attendance", label: tAttendance("detailsTab") },
+    { id: "roster", label: tAttendance("rosterTab") },
+  ];
+
   return (
-    <AttendanceCard
-      game={game}
-      attendanceStatus={status}
-      isSaving={isSaving}
-      error={saveError}
-      onConfirm={handleConfirm}
-      onDecline={handleDecline}
-      onRetry={handleSaveRetry}
-    />
+    <div>
+      <h1 className="text-2xl font-semibold">{pageTitle}</h1>
+      <p>
+        {format.dateTime(new Date(game.date), GAME_DATE_FORMAT)} ·{" "}
+        {format.dateTime(new Date(game.time), GAME_TIME_FORMAT)}
+      </p>
+      <p>{game.address}</p>
+      <TabList<GameDetailTab>
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        ariaLabel={pageTitle}
+      />
+      <div role="tabpanel">
+        {activeTab === "attendance" ? (
+          <AttendanceCard
+            attendanceStatus={status}
+            isSaving={isSaving}
+            error={saveError}
+            onConfirm={handleConfirm}
+            onDecline={handleDecline}
+            onRetry={handleSaveRetry}
+          />
+        ) : (
+          <RosterContainer
+            gameId={gameId}
+            playerId={playerId}
+            onInvalidPlayer={onInvalidPlayer}
+          />
+        )}
+      </div>
+    </div>
   );
 }
