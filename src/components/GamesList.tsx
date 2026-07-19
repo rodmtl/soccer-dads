@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { EmptyState } from "@/components/EmptyState";
 import { ErrorState } from "@/components/ErrorState";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { TabList } from "@/components/TabList";
 import { GAME_DATE_FORMAT, GAME_TIME_FORMAT } from "@/lib/gameDateTimeFormats";
 import type { AttendanceStatusValue } from "@/server/actions/listGames";
 
@@ -28,8 +29,6 @@ export interface GamesListProps {
   onRetry(): void;
 }
 
-const TABS: GamesTab[] = ["upcoming", "past"];
-
 // Games List (docs/ux/02-player-attendance.md): Upcoming/Past tabs over the
 // current player's own games, each row exposing date/location/status as a
 // single accessible name (screen reader users shouldn't have to hunt for the
@@ -47,15 +46,11 @@ export function GamesList({
   const tAttendance = useTranslations("Attendance");
   const tCommon = useTranslations("Common");
   const format = useFormatter();
-  const tabRefs = useRef<Record<GamesTab, HTMLButtonElement | null>>({
-    upcoming: null,
-    past: null,
-  });
 
-  const tabLabels: Record<GamesTab, string> = {
-    upcoming: t("upcomingTab"),
-    past: t("pastTab"),
-  };
+  const tabs: { id: GamesTab; label: string }[] = [
+    { id: "upcoming", label: t("upcomingTab") },
+    { id: "past", label: t("pastTab") },
+  ];
 
   function statusLabel(status: AttendanceStatusValue): string {
     if (status === "confirmed") return tAttendance("statusConfirmed");
@@ -69,16 +64,6 @@ export function GamesList({
 
   function formatGameTime(isoInstant: string): string {
     return format.dateTime(new Date(isoInstant), GAME_TIME_FORMAT);
-  }
-
-  function handleTabKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-    event.preventDefault();
-    const currentIndex = TABS.indexOf(activeTab);
-    const delta = event.key === "ArrowRight" ? 1 : -1;
-    const nextTab = TABS[(currentIndex + delta + TABS.length) % TABS.length];
-    onTabChange(nextTab);
-    tabRefs.current[nextTab]?.focus();
   }
 
   function renderPanelContent(): ReactNode {
@@ -140,25 +125,12 @@ export function GamesList({
   return (
     <div>
       <h1 className="text-2xl font-semibold">{t("title")}</h1>
-      <div role="tablist" aria-label={t("title")} className="flex gap-2 border-b">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            ref={(el) => {
-              tabRefs.current[tab] = el;
-            }}
-            role="tab"
-            type="button"
-            aria-selected={activeTab === tab}
-            tabIndex={activeTab === tab ? 0 : -1}
-            onClick={() => onTabChange(tab)}
-            onKeyDown={handleTabKeyDown}
-            className="min-h-11 px-4 font-medium"
-          >
-            {tabLabels[tab]}
-          </button>
-        ))}
-      </div>
+      <TabList<GamesTab>
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        ariaLabel={t("title")}
+      />
       <div role="tabpanel">{renderPanelContent()}</div>
     </div>
   );

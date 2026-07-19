@@ -5,12 +5,16 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { GameDetailContainer } from "@/components/GameDetailContainer";
 import { getGameAttendance } from "@/server/actions/getGameAttendance";
 import { setAttendance } from "@/server/actions/setAttendance";
+import { getGameRoster } from "@/server/actions/getGameRoster";
 
 vi.mock("@/server/actions/getGameAttendance", () => ({
   getGameAttendance: vi.fn(),
 }));
 vi.mock("@/server/actions/setAttendance", () => ({
   setAttendance: vi.fn(),
+}));
+vi.mock("@/server/actions/getGameRoster", () => ({
+  getGameRoster: vi.fn(),
 }));
 vi.mock("@/i18n/navigation", () => ({
   Link: ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -28,11 +32,26 @@ const messages = {
   },
   Attendance: {
     pageTitle: "Game at {locationName}",
+    detailsTab: "Details & Attendance",
+    rosterTab: "Roster",
     confirmButton: "I'm in",
     declineButton: "Can't make it",
     saved: "Saved",
     saveError: "Couldn't save your response.",
     gameNotFoundOrLoadError: "Couldn't load this game. Try again.",
+  },
+  Roster: {
+    loadError: "Couldn't load the roster. Try again.",
+    notGeneratedTitle: "Teams haven't been announced yet",
+    notGeneratedDescription: "Check back closer to game day.",
+    teamHeading: "Team {number}",
+    youBadge: "You",
+  },
+  Position: {
+    goalkeeper: "Goalkeeper",
+    defender: "Defender",
+    midfielder: "Midfielder",
+    striker: "Striker",
   },
 };
 
@@ -61,6 +80,7 @@ describe("GameDetailContainer", () => {
   afterEach(() => {
     vi.mocked(getGameAttendance).mockReset();
     vi.mocked(setAttendance).mockReset();
+    vi.mocked(getGameRoster).mockReset();
   });
 
   it("shows loading then the game's details and current status", async () => {
@@ -263,5 +283,86 @@ describe("GameDetailContainer", () => {
 
     await waitFor(() => expect(onInvalidPlayer).toHaveBeenCalledOnce());
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  describe("tabs", () => {
+    it("renders Details & Attendance and Roster tabs, with Details & Attendance selected by default", async () => {
+      vi.mocked(getGameAttendance).mockResolvedValue({
+        ok: true,
+        data: { game: gameDetails, status: "no_response" },
+      });
+
+      renderContainer();
+
+      await waitFor(() =>
+        expect(screen.getByRole("button", { name: "I'm in" })).toBeInTheDocument(),
+      );
+      expect(screen.getByRole("tab", { name: "Details & Attendance" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      expect(screen.getByRole("tab", { name: "Roster" })).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+    });
+
+    it("switches to the Roster tab and fetches that game's roster for the current player", async () => {
+      const user = userEvent.setup();
+      vi.mocked(getGameAttendance).mockResolvedValue({
+        ok: true,
+        data: { game: gameDetails, status: "no_response" },
+      });
+      vi.mocked(getGameRoster).mockResolvedValue({
+        ok: true,
+        data: { teams: [{ teamIndex: 0, players: [] }] },
+      });
+
+      renderContainer();
+      await waitFor(() =>
+        expect(screen.getByRole("button", { name: "I'm in" })).toBeInTheDocument(),
+      );
+
+      await user.click(screen.getByRole("tab", { name: "Roster" }));
+
+      expect(screen.getByRole("tab", { name: "Roster" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      await waitFor(() => expect(getGameRoster).toHaveBeenCalledWith("g1", "player-1"));
+      await waitFor(() =>
+        expect(screen.getByText("Teams haven't been announced yet")).toBeInTheDocument(),
+      );
+      // The shared header stays visible above both tabs, not owned by one.
+      expect(
+        screen.getByRole("heading", { name: "Game at Parque Central" }),
+      ).toBeInTheDocument();
+    });
+
+    it("switching back to Details & Attendance shows the attendance toggles again", async () => {
+      const user = userEvent.setup();
+      vi.mocked(getGameAttendance).mockResolvedValue({
+        ok: true,
+        data: { game: gameDetails, status: "no_response" },
+      });
+      vi.mocked(getGameRoster).mockResolvedValue({
+        ok: true,
+        data: { teams: [{ teamIndex: 0, players: [] }] },
+      });
+
+      renderContainer();
+      await waitFor(() =>
+        expect(screen.getByRole("button", { name: "I'm in" })).toBeInTheDocument(),
+      );
+
+      await user.click(screen.getByRole("tab", { name: "Roster" }));
+      await waitFor(() =>
+        expect(screen.getByText("Teams haven't been announced yet")).toBeInTheDocument(),
+      );
+
+      await user.click(screen.getByRole("tab", { name: "Details & Attendance" }));
+
+      expect(screen.getByRole("button", { name: "I'm in" })).toBeInTheDocument();
+    });
   });
 });
