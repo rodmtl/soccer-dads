@@ -58,4 +58,98 @@ describe("ToggleButton", () => {
 
     expect(onToggle).not.toHaveBeenCalled();
   });
+
+  // docs/ux/02-player-attendance.md's accessibility section: "Focus stays on
+  // the toggle button that was pressed through the save cycle (does not
+  // jump away)." A native `disabled` button can never hold focus, so
+  // disabled state must be conveyed via `aria-disabled` (which doesn't
+  // remove the element from the tab order) instead, with the click handler
+  // guarded to still be a no-op.
+  it("uses aria-disabled rather than the native disabled attribute when disabled, so the button stays focusable", () => {
+    render(
+      <ToggleButton pressed={false} onToggle={() => {}} disabled>
+        Confirm
+      </ToggleButton>,
+    );
+
+    const button = screen.getByRole("button", { name: "Confirm" });
+    expect(button).toHaveAttribute("aria-disabled", "true");
+    expect(button).not.toBeDisabled();
+  });
+
+  it("remains reachable via Tab when disabled (focus isn't lost mid-save)", async () => {
+    const user = userEvent.setup();
+    render(
+      <ToggleButton pressed={false} onToggle={() => {}} disabled>
+        Confirm
+      </ToggleButton>,
+    );
+
+    await user.tab();
+
+    expect(screen.getByRole("button", { name: "Confirm" })).toHaveFocus();
+  });
+
+  it("does not set aria-disabled when not disabled", () => {
+    render(
+      <ToggleButton pressed={false} onToggle={() => {}}>
+        Confirm
+      </ToggleButton>,
+    );
+
+    expect(screen.getByRole("button", { name: "Confirm" })).not.toHaveAttribute(
+      "aria-disabled",
+    );
+  });
+
+  // docs/ux/design-tokens.md: "Visual 'selected' state must not rely on
+  // color alone — pair with a checkmark glyph, filled vs. outlined style, or
+  // equivalent text change." aria-pressed alone is invisible to a sighted
+  // user, so the pressed state must be visually distinguishable too.
+  it("renders a visible checkmark glyph when pressed, absent when not pressed", () => {
+    const { rerender } = render(
+      <ToggleButton pressed onToggle={() => {}}>
+        Confirm
+      </ToggleButton>,
+    );
+
+    expect(screen.getByText("✓")).toBeInTheDocument();
+
+    rerender(
+      <ToggleButton pressed={false} onToggle={() => {}}>
+        Confirm
+      </ToggleButton>,
+    );
+
+    expect(screen.queryByText("✓")).not.toBeInTheDocument();
+  });
+
+  it("renders visually distinct styling when pressed vs. not pressed", () => {
+    const { rerender } = render(
+      <ToggleButton pressed onToggle={() => {}}>
+        Confirm
+      </ToggleButton>,
+    );
+    const pressedClassName = screen.getByRole("button", { name: "Confirm" }).className;
+
+    rerender(
+      <ToggleButton pressed={false} onToggle={() => {}}>
+        Confirm
+      </ToggleButton>,
+    );
+    const unpressedClassName = screen.getByRole("button", { name: "Confirm" }).className;
+
+    expect(pressedClassName).not.toBe(unpressedClassName);
+  });
+
+  it("the checkmark glyph is hidden from assistive tech (accessible name stays just the label)", () => {
+    render(
+      <ToggleButton pressed onToggle={() => {}}>
+        Confirm
+      </ToggleButton>,
+    );
+
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
+    expect(screen.getByText("✓")).toHaveAttribute("aria-hidden", "true");
+  });
 });
