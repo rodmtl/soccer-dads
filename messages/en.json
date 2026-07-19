@@ -1,7 +1,8 @@
 {
   "Common": {
     "loading": "Loading…",
-    "retry": "Retry"
+    "retry": "Retry",
+    "saving": "Saving…"
   },
   "PlayerIdentity": {
     "title": "Who are you?",
@@ -10,5 +11,28 @@
     "noPlayersTitle": "No players yet",
     "noPlayersDescription": "Ask your league organizer to add players before you can join a game.",
     "loadError": "Couldn't load players. Try again."
+  },
+  "Games": {
+    "title": "Games",
+    "upcomingTab": "Upcoming",
+    "pastTab": "Past",
+    "loadError": "Couldn't load games. Try again.",
+    "noUpcomingTitle": "No upcoming games",
+    "noUpcomingDescription": "Check back once your organizer schedules one.",
+    "noPastTitle": "No past games yet",
+    "gameRowLabel": "Game on {date} at {locationName}, {status}",
+    "gameNotFound": "This game couldn't be found.",
+    "backToList": "Back to games"
+  },
+  "Attendance": {
+    "pageTitle": "Game at {locationName}",
+    "confirmButton": "I'm in",
+    "declineButton": "Can't make it",
+    "statusConfirmed": "Confirmed",
+    "statusDeclined": "Declined",
+    "statusNoResponse": "No response yet",
+    "saved": "Saved",
+    "saveError": "Couldn't save your response.",
+    "gameNotFoundOrLoadError": "Couldn't load this game. Try again."
   }
 }

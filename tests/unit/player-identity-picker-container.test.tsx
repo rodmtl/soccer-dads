@@ -90,4 +90,23 @@ describe("PlayerIdentityPickerContainer", () => {
 
     expect(window.localStorage.getItem(CURRENT_PLAYER_STORAGE_KEY)).toBe("42");
   });
+
+  it("calls the optional onPlayerSelected callback with the selected player's id", async () => {
+    const user = userEvent.setup();
+    const onPlayerSelected = vi.fn();
+    vi.mocked(listPlayers).mockResolvedValue([{ id: "42", name: "Alice" }]);
+
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <PlayerIdentityPickerContainer onPlayerSelected={onPlayerSelected} />
+      </NextIntlClientProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Alice" })).toBeInTheDocument(),
+    );
+    await user.click(screen.getByRole("button", { name: "Alice" }));
+
+    expect(onPlayerSelected).toHaveBeenCalledWith("42");
+  });
 });

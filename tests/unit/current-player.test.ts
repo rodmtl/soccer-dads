@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   CURRENT_PLAYER_STORAGE_KEY,
+  clearCurrentPlayerId,
   getCurrentPlayerId,
   setCurrentPlayerId,
 } from "@/lib/currentPlayer";
@@ -42,5 +43,21 @@ describe("currentPlayer", () => {
 
     expect(() => getCurrentPlayerId()).not.toThrow();
     expect(getCurrentPlayerId()).toBeNull();
+  });
+
+  it("removes the stored player id, e.g. when a stale/invalid id is detected", () => {
+    setCurrentPlayerId("player-123");
+
+    clearCurrentPlayerId();
+
+    expect(getCurrentPlayerId()).toBeNull();
+  });
+
+  it("does not throw when localStorage.removeItem fails", () => {
+    vi.spyOn(Storage.prototype, "removeItem").mockImplementation(() => {
+      throw new Error("SecurityError");
+    });
+
+    expect(() => clearCurrentPlayerId()).not.toThrow();
   });
 });

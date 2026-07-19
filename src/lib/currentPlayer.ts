@@ -21,3 +21,15 @@ export function setCurrentPlayerId(playerId: string): void {
     // Swallow: see getCurrentPlayerId's comment above.
   }
 }
+
+// Used when a stored player id turns out to be stale (e.g. a Server Action
+// rejects it as no longer a real Player row) or when a player explicitly
+// switches identity — resets back to "no current player" so the identity
+// picker is shown again.
+export function clearCurrentPlayerId(): void {
+  try {
+    window.localStorage.removeItem(CURRENT_PLAYER_STORAGE_KEY);
+  } catch {
+    // Swallow: see getCurrentPlayerId's comment above.
+  }
+}

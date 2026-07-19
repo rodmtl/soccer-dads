@@ -1,7 +1,8 @@
 {
   "Common": {
     "loading": "Chargement…",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "saving": "Enregistrement…"
   },
   "PlayerIdentity": {
     "title": "Qui êtes-vous ?",
@@ -10,5 +11,28 @@
     "noPlayersTitle": "Aucun joueur pour l'instant",
     "noPlayersDescription": "Demandez à l'organisateur de la ligue d'ajouter des joueurs avant de pouvoir rejoindre une partie.",
     "loadError": "Impossible de charger les joueurs. Réessayez."
+  },
+  "Games": {
+    "title": "Matchs",
+    "upcomingTab": "À venir",
+    "pastTab": "Passés",
+    "loadError": "Impossible de charger les matchs. Réessayez.",
+    "noUpcomingTitle": "Aucun match à venir",
+    "noUpcomingDescription": "Revenez une fois que votre organisateur en aura programmé un.",
+    "noPastTitle": "Aucun match passé pour l'instant",
+    "gameRowLabel": "Match le {date} à {locationName}, {status}",
+    "gameNotFound": "Ce match est introuvable.",
+    "backToList": "Retour aux matchs"
+  },
+  "Attendance": {
+    "pageTitle": "Match à {locationName}",
+    "confirmButton": "Je participe",
+    "declineButton": "Je ne peux pas",
+    "statusConfirmed": "Confirmé",
+    "statusDeclined": "Décliné",
+    "statusNoResponse": "Pas encore répondu",
+    "saved": "Enregistré",
+    "saveError": "Impossible d'enregistrer votre réponse.",
+    "gameNotFoundOrLoadError": "Impossible de charger ce match. Réessayez."
   }
 }

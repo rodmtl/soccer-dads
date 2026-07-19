@@ -12,9 +12,18 @@ function toError(caught: unknown): Error {
   return caught instanceof Error ? caught : new Error("Unknown error");
 }
 
+export interface PlayerIdentityPickerContainerProps {
+  // Notified (in addition to persisting the id) once a player is selected —
+  // used by callers (e.g. CurrentPlayerGate) that need to react immediately
+  // rather than re-reading localStorage.
+  onPlayerSelected?(playerId: string): void;
+}
+
 // Wires the presentational PlayerIdentityPicker to the listPlayers Server
 // Action and to "current player" persistence (see docs/ux/01-player-identity.md).
-export function PlayerIdentityPickerContainer() {
+export function PlayerIdentityPickerContainer({
+  onPlayerSelected,
+}: PlayerIdentityPickerContainerProps = {}) {
   const [players, setPlayers] = useState<PlayerIdentityPickerPlayer[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -45,12 +54,17 @@ export function PlayerIdentityPickerContainer() {
     setAttempt((previousAttempt) => previousAttempt + 1);
   }
 
+  function handleSelectPlayer(playerId: string) {
+    setCurrentPlayerId(playerId);
+    onPlayerSelected?.(playerId);
+  }
+
   return (
     <PlayerIdentityPicker
       players={players}
       isLoading={isLoading}
       error={error}
-      onSelectPlayer={setCurrentPlayerId}
+      onSelectPlayer={handleSelectPlayer}
       onRetry={handleRetry}
     />
   );
