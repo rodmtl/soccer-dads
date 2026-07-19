@@ -1,0 +1,130 @@
+// GarageLeague data model.
+// Source of truth for entity/field decisions: docs/data-model.md.
+// Do not add fields here that are not documented there.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Position {
+  goalkeeper
+  defender
+  midfielder
+  striker
+}
+
+enum AttendanceStatus {
+  confirmed
+  declined
+  no_response
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  gamesCreated     Game[]           @relation("GameCreatedBy")
+  paymentsMarked   Payment[]        @relation("PaymentMarkedBy")
+  teamAssignments  TeamAssignment[] @relation("TeamAssignmentUpdatedBy")
+
+  @@map("admins")
+}
+
+model Player {
+  id               String     @id @default(uuid())
+  name             String
+  age              Int
+  // Max 2 values, each one of Position; enforced at the application layer
+  // (see docs/data-model.md's Player constraint note).
+  positions        Position[]
+  // 0-100, admin-only visibility.
+  rating           Int        @default(60)
+  phone            String?
+  email            String?
+  facebookProfile  String?    @map("facebook_profile")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+
+  attendances      Attendance[]
+  teamAssignments  TeamAssignment[]
+  payments         Payment[]
+
+  @@map("players")
+}
+
+model Game {
+  id             String   @id @default(uuid())
+  date           DateTime @db.Date
+  time           DateTime @db.Time
+  locationName   String   @map("location_name")
+  address        String
+  // Admin-set per game, how many teams the roster algorithm should split
+  // confirmed players into for this game (see docs/data-model.md).
+  numberOfTeams  Int      @default(2) @map("number_of_teams")
+  // Derived, pre-filled WhatsApp share text/link — generated, not user-entered.
+  shareText      String   @map("share_text")
+  createdById    String   @map("created_by")
+  createdBy      Admin    @relation("GameCreatedBy", fields: [createdById], references: [id])
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  attendances     Attendance[]
+  teamAssignments TeamAssignment[]
+  payments        Payment[]
+
+  @@unique([date, locationName])
+  @@map("games")
+}
+
+model Attendance {
+  id           String            @id @default(uuid())
+  gameId       String            @map("game_id")
+  game         Game              @relation(fields: [gameId], references: [id])
+  playerId     String            @map("player_id")
+  player       Player            @relation(fields: [playerId], references: [id])
+  status       AttendanceStatus  @default(no_response)
+  respondedAt  DateTime?         @map("responded_at")
+
+  @@unique([gameId, playerId])
+  @@map("attendances")
+}
+
+model TeamAssignment {
+  id                String    @id @default(uuid())
+  gameId            String    @map("game_id")
+  game              Game      @relation(fields: [gameId], references: [id])
+  playerId          String    @map("player_id")
+  player            Player    @relation(fields: [playerId], references: [id])
+  // Arbitrary team number scoped to (gameId), not a fixed A/B enum and not a
+  // foreign key to a Team table — see docs/data-model.md.
+  teamIndex         Int       @map("team_index")
+  assignedPosition  Position  @map("assigned_position")
+  generatedAt       DateTime  @default(now()) @map("generated_at")
+  updatedById       String?   @map("updated_by")
+  updatedBy         Admin?    @relation("TeamAssignmentUpdatedBy", fields: [updatedById], references: [id])
+
+  @@unique([gameId, playerId])
+  @@map("team_assignments")
+}
+
+model Payment {
+  id           String   @id @default(uuid())
+  gameId       String   @map("game_id")
+  game         Game     @relation(fields: [gameId], references: [id])
+  playerId     String   @map("player_id")
+  player       Player   @relation(fields: [playerId], references: [id])
+  paid         Boolean  @default(false)
+  amount       Decimal? @db.Decimal(10, 2)
+  markedById   String   @map("marked_by")
+  markedBy     Admin    @relation("PaymentMarkedBy", fields: [markedById], references: [id])
+  markedAt     DateTime @map("marked_at")
+
+  @@unique([gameId, playerId])
+  @@map("payments")
+}
