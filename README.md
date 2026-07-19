@@ -1,4 +1,4 @@
-# GarageLeague
+# Soccer Dads
 
 A small webapp for running a garage/pickup soccer league: schedule games, track attendance,
 generate balanced team rosters, and track per-game payments. Bilingual (English/French) from v1.

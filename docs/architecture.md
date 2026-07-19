@@ -1,4 +1,4 @@
-# Architecture — GarageLeague Participant Registration
+# Architecture — Soccer Dads Participant Registration
 
 This document reflects the **ACCEPTED** decision in
 `docs/adr/0001-hosting-and-backend-runtime.md`: **Option B** — drop the C#/.NET backend entirely,

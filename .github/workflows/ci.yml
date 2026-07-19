@@ -9,7 +9,7 @@ on:
 env:
   # Only needed for Prisma Client generation / any DB-touching unit tests added
   # later. Not a real secret — matches the docker-compose postgres service.
-  DATABASE_URL: "postgresql://garageleague:garageleague@localhost:5432/garageleague?schema=public"
+  DATABASE_URL: "postgresql://soccerdads:soccerdads@localhost:5432/soccerdads?schema=public"
 
 jobs:
   build-and-test:

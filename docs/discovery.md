@@ -1,4 +1,4 @@
-# Discovery — GarageLeague Participant Registration
+# Discovery — Soccer Dads Participant Registration
 
 Phase 0 output. Source spec: `specs/initial.md`.
 

@@ -29,7 +29,7 @@ Adjust once the project scope is known, but the default assumption is:
   when the architect agent decides cross-cutting state actually needs it
 - **CI:** GitHub Actions — lint, typecheck, unit tests, build, (e2e on PR to main)
 
-### This project (GarageLeague / soccer-dads): decided stack
+### This project (Soccer Dads): decided stack
 
 This app's stack has already been decided and is **final** — see
 `docs/adr/0001-hosting-and-backend-runtime.md` (ACCEPTED). Don't re-litigate this; treat it as the

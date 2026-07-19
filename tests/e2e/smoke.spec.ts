@@ -6,5 +6,5 @@ test("home page redirects to a locale and renders", async ({ page }) => {
   await page.goto("/");
 
   await expect(page).toHaveURL(/\/(en|fr)\/?$/);
-  await expect(page.getByRole("heading", { name: "GarageLeague" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Soccer Dads" })).toBeVisible();
 });

@@ -3,11 +3,11 @@ import { describe, expect, it } from "vitest";
 import HomePage from "@/app/[locale]/page";
 
 describe("HomePage", () => {
-  it("renders the GarageLeague heading", () => {
+  it("renders the Soccer Dads heading", () => {
     render(<HomePage />);
 
     expect(
-      screen.getByRole("heading", { name: "GarageLeague" }),
+      screen.getByRole("heading", { name: "Soccer Dads" }),
     ).toBeInTheDocument();
   });
 });

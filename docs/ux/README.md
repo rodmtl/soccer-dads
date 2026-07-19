@@ -1,4 +1,4 @@
-# UX Specs — GarageLeague (Phase 2)
+# UX Specs — Soccer Dads (Phase 2)
 
 Phase 2 output of the workflow in the repo's `CLAUDE.md`: flows, states, component contracts, and
 accessibility requirements for every v1 feature, ready for `ts-react-tdd-coder` to implement

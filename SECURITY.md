@@ -1,6 +1,6 @@
 # Security Policy
 
-GarageLeague is a small, hobby-scale project, but we still take security reports seriously.
+Soccer Dads is a small, hobby-scale project, but we still take security reports seriously.
 
 ## Reporting a vulnerability
 

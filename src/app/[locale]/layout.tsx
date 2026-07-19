@@ -6,7 +6,7 @@ import { routing } from "@/i18n/routing";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "GarageLeague",
+  title: "Soccer Dads",
   description: "Game scheduling, rosters, and attendance for a garage soccer league.",
 };
 

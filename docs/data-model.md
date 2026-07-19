@@ -1,4 +1,4 @@
-# Data Model — GarageLeague Participant Registration
+# Data Model — Soccer Dads Participant Registration
 
 Baseline: PostgreSQL, accessed via Prisma (see `docs/architecture.md` and
 `docs/adr/0001-hosting-and-backend-runtime.md`). Entity/field names below are logical (a later
